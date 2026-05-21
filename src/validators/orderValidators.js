@@ -1,6 +1,12 @@
 const { body } = require('express-validator');
 
 const createOrderRules = [
+  body('customer.email')
+    .trim()
+    .notEmpty()
+    .withMessage('Customer email is required')
+    .isEmail()
+    .withMessage('Customer email must be valid'),
   body('customer.full_name').trim().notEmpty().withMessage('Customer full name is required'),
   body('customer.phone').optional().trim(),
   body('customer.address').optional().trim(),

@@ -2,6 +2,11 @@ const pool = require('../config/database');
 const AppError = require('../utils/AppError');
 
 async function createOrder({ customer, items, shipping_address, notes }) {
+  if (!customer?.email) {
+    // Keep invalid payloads out of the database before hitting the NOT NULL column.
+    throw new AppError('Customer email is required', 400);
+  }
+
   const connection = await pool.getConnection();
 
   try {
