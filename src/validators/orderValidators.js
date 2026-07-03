@@ -1,6 +1,12 @@
 const { body } = require('express-validator');
 
 const createOrderRules = [
+  body('customer.email')
+    .trim()
+    .notEmpty()
+    .withMessage('Customer email is required')
+    .isEmail()
+    .withMessage('Customer email must be valid'),
   body('customer.full_name').trim().notEmpty().withMessage('Customer full name is required'),
   body('customer.phone').optional().trim(),
   body('customer.address').optional().trim(),
@@ -8,7 +14,8 @@ const createOrderRules = [
   body('items').isArray({ min: 1 }).withMessage('At least one order item is required'),
   body('items.*.shoe_id').isInt({ min: 1 }).withMessage('Valid shoe_id is required'),
   body('items.*.quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1'),
-  body('notes').optional().trim(),
+  // Treat explicit null notes as absent; avoids stringifying a null value downstream.
+  body('notes').optional({ values: 'null' }).trim(),
 ];
 
 const updateStatusRules = [
