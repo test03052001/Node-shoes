@@ -2,6 +2,11 @@ const pool = require('../config/database');
 const AppError = require('../utils/AppError');
 
 async function createOrder({ customer, items, shipping_address, notes }) {
+  if (!customer?.email) {
+    // Guard nullable customer email before DB insert (NullPointerException analogue).
+    throw new AppError('Customer email is required', 400);
+  }
+
   const connection = await pool.getConnection();
 
   try {
